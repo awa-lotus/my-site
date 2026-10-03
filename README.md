@@ -2,6 +2,8 @@
 
 個人サイト(ポートフォリオ・ブログ・本棚・愛用品)。[Astro](https://astro.build/) で作った静的サイトを GitHub Pages(https://awa-lotus.github.io/my-site/)で公開しています。
 
+デザインの決まりごとは [DESIGN.md](DESIGN.md) にまとめています。
+
 ## ローカルで動かす
 
 Node.js 22.12 以上が必要です(`.nvmrc` あり)。
