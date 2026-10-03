@@ -246,6 +246,21 @@ main:has(> .band:last-child) { padding-bottom: 0; }
 .geo-arc { stroke: var(--lotus-petal); stroke-width: 1.5; }
 .geo-dot { fill: var(--lotus-petal); stroke: none; }
 @keyframes geo-spin { to { rotate: 360deg; } }
+/* 光彩: 花びらと花托の色をぼかして円の奥に置く。時間とともにゆっくり位置と色味が移ろう */
+.glow {
+  position: absolute; z-index: -2; pointer-events: none;
+  width: min(48vw, 520px); aspect-ratio: 1; right: max(-6vw, -80px); top: 18%;
+  background:
+    radial-gradient(closest-side at 38% 40%, var(--lotus-petal), transparent),
+    radial-gradient(closest-side at 66% 64%, var(--lotus-pod), transparent);
+  filter: blur(60px); opacity: 0.2; border-radius: 50%;
+  animation: glow-drift 16s ease-in-out infinite alternate;
+}
+@media (prefers-color-scheme: dark) { .glow { opacity: 0.22; } }
+@keyframes glow-drift {
+  0% { transform: translate(0, 0) rotate(0deg); filter: blur(60px) hue-rotate(0deg); }
+  100% { transform: translate(-8%, 10%) rotate(40deg); filter: blur(70px) hue-rotate(20deg); }
+}
 /* 縦書きのスクロール表示。右端に線が流れる */
 .scroll-cue {
   position: absolute; right: 0; bottom: 3.5rem;
@@ -362,13 +377,20 @@ main:has(> .band:last-child) { padding-bottom: 0; }
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-    radial-gradient(60% 80% at 85% 0%, oklch(0.56 0.17 0 / 0.35), transparent 70%);
+    radial-gradient(60% 80% at calc(var(--mx, 0.85) * 100%) calc(var(--my, 0) * 100%), oklch(0.56 0.17 0 / 0.35), transparent 70%);
   background-size: 32px 32px, 32px 32px, auto;
 }
 .thumb-initials {
   font-family: var(--font-jp); font-weight: 700; font-size: clamp(3.5rem, 9vw, 6rem);
   letter-spacing: -0.05em; line-height: 1;
+  /* --mx/--my(0〜1)はカーソル位置。中央 0.5 のとき傾きなし */
+  transform: perspective(500px)
+    rotateY(calc((var(--mx, 0.5) - 0.5) * 28deg))
+    rotateX(calc((var(--my, 0.5) - 0.5) * -28deg));
+  text-shadow: calc((var(--mx, 0.5) - 0.5) * -10px) calc((var(--my, 0.5) - 0.5) * -10px) 0 oklch(0.7 0.15 0 / 0.4);
+  transition: transform 0.5s var(--ease), text-shadow 0.5s var(--ease);
 }
+.project-thumb:hover .thumb-initials { transition-duration: 0.12s; }
 .thumb-path {
   position: absolute; left: 1.6rem; bottom: 1.1rem;
   font-family: var(--mono); font-size: 0.72rem; color: rgba(255, 255, 255, 0.55);
@@ -615,6 +637,8 @@ details summary:hover { color: var(--fg); }
   .intro-meta { grid-template-columns: 1fr; gap: 1rem; margin-top: 2rem; margin-right: 0; }
   .intro { min-height: calc(100svh - 96px); padding-bottom: 2.5rem; }
   .geo { width: 110vw; right: -45vw; top: 46%; }
+  .glow { width: 90vw; right: -30vw; top: 30%; }
+  .site-nav a { padding-block: 0.6rem; }
   .scroll-cue { display: none; }
   .marquee { margin-top: 4rem; }
   .page-head, .article-head { padding-top: 3.5rem; }
@@ -626,17 +650,43 @@ details summary:hover { color: var(--fg); }
   .footer-bottom .copy { text-align: left; }
 }
 
-/* スクロールに合わせて要素がふわっと出る(対応ブラウザのみ・JS なし) */
+/* スクロール連動の動き(JS なし・対応ブラウザのみ)
+   animation-timeline は animation の短縮形と同じルールに書くと、CSS 圧縮で短縮形に
+   まとめられて無効になる。そのため :root を付けた別ルールで指定する */
+.progress { display: none; }
 @supports (animation-timeline: view()) {
-  .scroll-in {
-    animation: scroll-in linear both;
-    animation-timeline: view();
-    animation-range: entry 0% entry 40%;
-  }
+  /* 要素がふわっと出る */
+  .scroll-in { animation: scroll-in linear both; animation-range: entry 0% entry 40%; }
+  :root .scroll-in { animation-timeline: view(); }
   @keyframes scroll-in {
     from { opacity: 0; transform: translateY(24px); }
     to { opacity: 1; transform: none; }
   }
+  /* 作品サムネイルは少し寄った状態から引いていく(ズームアウト) */
+  .thumb-ph { animation: zoom-out linear both; animation-range: entry 0% cover 50%; }
+  :root .thumb-ph { animation-timeline: view(); }
+  @keyframes zoom-out { from { scale: 1.18; } to { scale: 1; } }
+
+  /* 左端の進捗バー */
+  .progress {
+    display: block; position: fixed; z-index: 60; left: 0; top: 0; bottom: 0; width: 2px;
+    background: var(--lotus-petal); transform-origin: top; transform: scaleY(0);
+    animation: progress linear both;
+  }
+  :root .progress { animation-timeline: scroll(root); }
+  @keyframes progress { to { transform: scaleY(1); } }
+
+  /* ファーストビューは層ごとに速さを変える(パララックス)。円は回りながら沈み、光は遅れて動き、ワードマークは奥へ退く */
+  .geo { animation: geo-spin 90s linear infinite, geo-sink linear both; animation-range: normal, 0 100vh; }
+  :root .geo { animation-timeline: auto, scroll(root); }
+  @keyframes geo-sink { to { transform: translateY(22vh) rotate(-75deg) scale(1.25); } }
+  .glow { animation: glow-drift 16s ease-in-out infinite alternate, glow-sink linear both; animation-range: normal, 0 100vh; }
+  :root .glow { animation-timeline: auto, scroll(root); }
+  @keyframes glow-sink { to { translate: 0 34vh; } }
+  .wordmark { transform-origin: left bottom; }
+  .wordmark.reveal { animation: reveal 0.9s var(--ease) both, wm-recede linear both; animation-range: normal, 0 90vh; }
+  :root .wordmark.reveal { animation-timeline: auto, scroll(root); }
+  @keyframes wm-recede { to { scale: 0.86; translate: 0 -6vh; } }
 }
 
 @media (prefers-reduced-motion: reduce) {

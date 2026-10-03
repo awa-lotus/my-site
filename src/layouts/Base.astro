@@ -55,6 +55,7 @@ const isActive = (href: string) =>
         </nav>
       </div>
     </header>
+    <div class="progress" aria-hidden="true"></div>
     <main>
       <slot />
     </main>
@@ -81,5 +82,27 @@ const isActive = (href: string) =>
         </div>
       </div>
     </footer>
+    <script>
+      // 作品サムネイルの文字がカーソルに合わせて立体的に傾く。マウス操作かつ動きを減らす設定でないときだけ
+      const fine = matchMedia('(pointer: fine) and (prefers-reduced-motion: no-preference)');
+      if (fine.matches) {
+        // カードはリンクが全面を覆っているので、カード全体でカーソルを拾ってサムネイルに渡す
+        for (const card of document.querySelectorAll<HTMLElement>('.project')) {
+          const el = card.querySelector<HTMLElement>('.project-thumb');
+          if (!el) continue;
+          card.addEventListener('pointermove', (e) => {
+            const r = el.getBoundingClientRect();
+            const x = Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1);
+            const y = Math.min(Math.max((e.clientY - r.top) / r.height, 0), 1);
+            el.style.setProperty('--mx', x.toFixed(3));
+            el.style.setProperty('--my', y.toFixed(3));
+          });
+          card.addEventListener('pointerleave', () => {
+            el.style.removeProperty('--mx');
+            el.style.removeProperty('--my');
+          });
+        }
+      }
+    </script>
   </body>
 </html>
