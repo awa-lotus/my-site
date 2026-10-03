@@ -8,16 +8,32 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { title, description, tech, date } = project.data;
+const { title, description, tech, date, image } = project.data;
+// 画像がないときのサムネイル用の頭文字(英語は単語の頭、日本語は先頭 1 字)
+const initials = /^[\x00-\x7f]+$/.test(title)
+  ? title.split(/\s+/).map((w) => w[0]).join('').slice(0, 3).toUpperCase()
+  : [...title][0];
 ---
 
-<article class="card card-link project">
-  <span class="corners" aria-hidden="true"></span>
-  <div class="project-meta">
-    <span>{date.getFullYear()}</span>
-    <span class="arrow"><Icon name="arrow-right" /></span>
+<article class="card card-link project scroll-in">
+  <div class="project-thumb">
+    {image ? (
+      <img src={image} alt="" loading="lazy" />
+    ) : (
+      <div class="thumb-ph" aria-hidden="true">
+        <span class="thumb-initials">{initials}</span>
+        <span class="thumb-path">~/works/{project.id}</span>
+      </div>
+    )}
+    <span class="corners" aria-hidden="true"></span>
   </div>
-  <h3><a href={url(`/projects/${project.id}/`)}>{title}</a></h3>
-  <p>{description}</p>
-  {tech.length > 0 && <ul class="chips">{tech.map((t) => <li class="chip">{t}</li>)}</ul>}
+  <div class="project-body">
+    <div class="project-meta">
+      <span>{date.getFullYear()}</span>
+      <span class="arrow"><Icon name="arrow-right" /></span>
+    </div>
+    <h3><a href={url(`/projects/${project.id}/`)}>{title}</a></h3>
+    <p>{description}</p>
+    {tech.length > 0 && <ul class="chips">{tech.map((t) => <li class="chip">{t}</li>)}</ul>}
+  </div>
 </article>

@@ -11,6 +11,12 @@ export const AFFILIATE = {
   amazonTag: '',
 };
 
+// 人となり(トップの About と About ページで使う)。bio は空ならトップでは出さない
+export const PROFILE = {
+  bio: '',
+  skills: ['TypeScript / Web フロントエンド', 'Bot 開発'],
+};
+
 export const NAV = [
   { href: '/', label: 'Home' },
   { href: '/projects/', label: 'Works' },

@@ -180,6 +180,16 @@ main { flex: 1; padding-block: 0 6rem; }
 .band { background: var(--bg-band); margin-top: 4.5rem; padding-block: 0.5rem 6rem; }
 .band > .container > .section:first-child { padding-top: 3.5rem; }
 main:has(> .band:last-child) { padding-bottom: 0; }
+.band + .container > .section:first-child { padding-top: 4.5rem; }
+
+/* トップの About: 仕様表のような 2 列 */
+.spec { display: grid; grid-template-columns: 9rem 1fr; margin: 0; border-top: 1px solid var(--line); }
+.spec dt, .spec dd { margin: 0; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+.spec dt { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); padding-top: 1.2rem; }
+.spec dd ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.25rem; }
+.about-bio { margin: 0 0 2rem; max-width: 40em; letter-spacing: 0.04em; color: var(--fg-soft); }
+.about-teaser .section-head + .about-grid { margin-top: -1.75rem; }
+.about-teaser .spec { border-top: 0; }
 
 .more {
   display: inline-flex; align-items: center; gap: 0.4rem;
@@ -278,17 +288,35 @@ main:has(> .band:last-child) { padding-bottom: 0; }
 }
 .card-link:hover { transform: translateY(-3px); border-color: var(--line-strong); box-shadow: var(--shadow); }
 
-.project { display: flex; flex-direction: column; min-height: 230px; overflow: hidden; }
-.project::before {
-  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0;
-  background: radial-gradient(400px circle at 100% 0%, var(--accent-soft), transparent 60%);
-  transition: opacity 0.4s;
+/* 作品はビジュアルを大きく。画像がなければ方眼+頭文字のサムネイルを出す */
+.project { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+.project-thumb { position: relative; aspect-ratio: 16 / 10; overflow: hidden; border-bottom: 1px solid var(--line); }
+.project-thumb img, .thumb-ph {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.8s var(--ease);
 }
-.project:hover::before { opacity: 1; }
+.project:hover .project-thumb img, .project:hover .thumb-ph { transform: scale(1.04); }
+.thumb-ph {
+  position: relative; display: grid; place-items: center;
+  background-color: #0a0a0a; color: #fafafa;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    radial-gradient(60% 80% at 85% 0%, oklch(0.56 0.17 0 / 0.35), transparent 70%);
+  background-size: 32px 32px, 32px 32px, auto;
+}
+.thumb-initials {
+  font-family: var(--font-jp); font-weight: 700; font-size: clamp(3.5rem, 9vw, 6rem);
+  letter-spacing: -0.05em; line-height: 1;
+}
+.thumb-path {
+  position: absolute; left: 1.6rem; bottom: 1.1rem;
+  font-family: var(--mono); font-size: 0.72rem; color: rgba(255, 255, 255, 0.55);
+}
 .corners {
   position: absolute; inset: 8px; pointer-events: none; opacity: 0; transform: scale(1.02);
   transition: opacity 0.3s, transform 0.4s var(--ease);
-  --c: var(--lotus-petal); --l: 12px;
+  --c: oklch(0.76 0.12 0); --l: 12px;
   background:
     linear-gradient(var(--c), var(--c)) top left / var(--l) 1px,
     linear-gradient(var(--c), var(--c)) top left / 1px var(--l),
@@ -301,6 +329,7 @@ main:has(> .band:last-child) { padding-bottom: 0; }
   background-repeat: no-repeat;
 }
 .project:hover .corners { opacity: 1; transform: none; }
+.project-body { display: flex; flex-direction: column; flex: 1; padding: 1.25rem 1.5rem 1.5rem; }
 .project-meta {
   display: flex; justify-content: space-between; align-items: center;
   font-family: var(--mono); font-size: 0.75rem; color: var(--muted);
@@ -313,10 +342,10 @@ main:has(> .band:last-child) { padding-bottom: 0; }
 .project:hover .project-meta .arrow {
   transform: rotate(-45deg); background: var(--fg); color: var(--bg); border-color: var(--fg);
 }
-.project h3 { font-size: 1.35rem; margin: 2.25rem 0 0.4rem; }
+.project h3 { font-size: 1.35rem; margin: 0.9rem 0 0.4rem; }
 .project h3 a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
 .project p { margin: 0; color: var(--muted); font-size: 0.93rem; line-height: 1.7; }
-.project .chips { margin-top: auto; padding-top: 1.5rem; }
+.project .chips { margin-top: auto; padding-top: 1.25rem; }
 
 .chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0; padding: 0; list-style: none; }
 .chip {
@@ -526,12 +555,24 @@ details summary:hover { color: var(--fg); }
   .intro-meta { grid-template-columns: 1fr; gap: 1rem; margin-top: 2rem; }
   .page-head, .article-head { padding-top: 3.5rem; }
   .grid { grid-template-columns: 1fr; }
-  .project { min-height: 0; }
   .post-row a { grid-template-columns: 1fr; gap: 0.2rem; }
   .post-tags { text-align: left; }
   .product { grid-template-columns: 80px 1fr; gap: 1rem; }
   .card { padding: 1.25rem; }
   .footer-bottom .copy { text-align: left; }
+}
+
+/* スクロールに合わせて要素がふわっと出る(対応ブラウザのみ・JS なし) */
+@supports (animation-timeline: view()) {
+  .scroll-in {
+    animation: scroll-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 40%;
+  }
+  @keyframes scroll-in {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: none; }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

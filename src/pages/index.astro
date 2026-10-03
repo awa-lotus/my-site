@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import SectionHead from '../components/SectionHead.astro';
-import { SITE } from '../consts';
+import { PROFILE, SITE } from '../consts';
 import { getPosts, getProjects } from '../data';
 import { url } from '../lib';
 
@@ -60,5 +60,20 @@ const [head, ...rest] = SITE.title.split('-');
         <PostList posts={posts} />
       </section>
     </div>
+  </div>
+
+  <div class="container">
+    <section class="section about-teaser">
+      <SectionHead num="03" title="About" label="人となり" href={url('/about/')} more="Read more" />
+      <div class="about-grid scroll-in">
+        {PROFILE.bio && <p class="about-bio">{PROFILE.bio}</p>}
+        <dl class="spec">
+          <dt>Skills</dt>
+          <dd><ul>{PROFILE.skills.map((s) => <li>{s}</li>)}</ul></dd>
+          <dt>Interests</dt>
+          <dd>Books · Tools · Writing</dd>
+        </dl>
+      </div>
+    </section>
   </div>
 </Base>
