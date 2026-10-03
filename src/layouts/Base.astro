@@ -6,7 +6,6 @@ import '@fontsource/zen-kaku-gothic-new/400.css';
 import '@fontsource/zen-kaku-gothic-new/500.css';
 import '@fontsource/zen-kaku-gothic-new/700.css';
 import '../styles/global.css';
-import Icon from '../components/Icon.astro';
 import { SITE, NAV } from '../consts';
 import { url } from '../lib';
 
@@ -45,7 +44,7 @@ const isActive = (href: string) =>
   <body>
     <header class="site-header">
       <div class="container header-inner">
-        <a class="logo" href={url('/')}><Icon name="lotus" />{SITE.title}</a>
+        <a class="logo" href={url('/')}>{SITE.title}<span class="dot" aria-hidden="true">.</span></a>
         <nav class="site-nav" aria-label="メイン">
           {NAV.map((item) => (
             <a href={url(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>
@@ -55,7 +54,6 @@ const isActive = (href: string) =>
         </nav>
       </div>
     </header>
-    <div class="progress" aria-hidden="true"></div>
     <main>
       <slot />
     </main>
@@ -63,7 +61,7 @@ const isActive = (href: string) =>
       <div class="container">
         <div class="footer-grid">
           <div class="footer-brand">
-            <a class="logo" href={url('/')}><Icon name="lotus" />{SITE.title}</a>
+            <a class="logo" href={url('/')}>{SITE.title}<span class="dot" aria-hidden="true">.</span></a>
             <p>{SITE.description}</p>
           </div>
           <div class="footer-col">
@@ -82,27 +80,5 @@ const isActive = (href: string) =>
         </div>
       </div>
     </footer>
-    <script>
-      // 作品サムネイルの文字がカーソルに合わせて立体的に傾く。マウス操作かつ動きを減らす設定でないときだけ
-      const fine = matchMedia('(pointer: fine) and (prefers-reduced-motion: no-preference)');
-      if (fine.matches) {
-        // カードはリンクが全面を覆っているので、カード全体でカーソルを拾ってサムネイルに渡す
-        for (const card of document.querySelectorAll<HTMLElement>('.project')) {
-          const el = card.querySelector<HTMLElement>('.project-thumb');
-          if (!el) continue;
-          card.addEventListener('pointermove', (e) => {
-            const r = el.getBoundingClientRect();
-            const x = Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1);
-            const y = Math.min(Math.max((e.clientY - r.top) / r.height, 0), 1);
-            el.style.setProperty('--mx', x.toFixed(3));
-            el.style.setProperty('--my', y.toFixed(3));
-          });
-          card.addEventListener('pointerleave', () => {
-            el.style.removeProperty('--mx');
-            el.style.removeProperty('--my');
-          });
-        }
-      }
-    </script>
   </body>
 </html>

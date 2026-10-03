@@ -1,6 +1,5 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import Icon from './Icon.astro';
 import { url } from '../lib';
 
 interface Props {
@@ -15,25 +14,22 @@ const initials = /^[\x00-\x7f]+$/.test(title)
   : [...title][0];
 ---
 
-<article class="card card-link project scroll-in">
+<article class="project scroll-in">
   <div class="project-thumb">
     {image ? (
       <img src={image} alt="" loading="lazy" />
     ) : (
       <div class="thumb-ph" aria-hidden="true">
         <span class="thumb-initials">{initials}</span>
-        <span class="thumb-path">~/works/{project.id}</span>
       </div>
     )}
-    <span class="corners" aria-hidden="true"></span>
   </div>
   <div class="project-body">
-    <div class="project-meta">
-      <span>{date.getFullYear()}</span>
-      <span class="arrow"><Icon name="arrow-right" /></span>
+    <div class="project-head">
+      <h3><a href={url(`/projects/${project.id}/`)}>{title}</a></h3>
+      <span class="project-year">{date.getFullYear()}</span>
     </div>
-    <h3><a href={url(`/projects/${project.id}/`)}>{title}</a></h3>
     <p>{description}</p>
-    {tech.length > 0 && <ul class="chips">{tech.map((t) => <li class="chip">{t}</li>)}</ul>}
+    {tech.length > 0 && <p class="project-tech">{tech.join(', ')}</p>}
   </div>
 </article>

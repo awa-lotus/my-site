@@ -1,5 +1,5 @@
 export const SITE = {
-  title: 'L-Works',
+  title: 'LWorks',
   description: '開発のポートフォリオ、ブログ、読んだ本と愛用品の記録。',
   author: 'awa',
   lang: 'ja',

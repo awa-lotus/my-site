@@ -13,9 +13,7 @@ const { num, title, label, href, more = 'View all' } = Astro.props;
 ---
 
 <div class="section-head scroll-in">
-  <div>
-    <p class="section-eyebrow">// <span class="num">{num}</span>{label && ` — ${label}`}</p>
-    <h2 class="section-title">{title}</h2>
-  </div>
+  <span class="section-num">{num}</span>
+  <h2 class="section-title">{title}{label && <span class="section-label">{label}</span>}</h2>
   {href && <a class="more" href={href}>{more} <Icon name="arrow-right" class="arrow" /></a>}
 </div>
