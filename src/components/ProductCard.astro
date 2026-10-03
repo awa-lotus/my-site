@@ -14,15 +14,19 @@ interface Props {
 
 const { title, subtitle, image, rating, asin, links = [], tags = [] } = Astro.props;
 const buyLinks = [...(asin ? [{ label: 'Amazon', url: amazonUrl(asin) }] : []), ...links];
-// 画像がないときの表紙の色をタイトルから決める
-const hue = [...title].reduce((h, c) => (h * 31 + c.codePointAt(0)!) % 360, 7);
+// 画像がないときの表紙。白か黒の地に蓮の色を 1 つ、タイトルから決める
+const LOTUS = ['--lotus-petal', '--lotus-leaf', '--lotus-pod', '--lotus-bud'];
+const hash = [...title].reduce((h, c) => (h * 31 + c.codePointAt(0)!) % 9973, 7);
+const coverColor = `var(${LOTUS[hash % LOTUS.length]})`;
+const coverLight = Math.floor(hash / LOTUS.length) % 2 === 1;
 ---
 
 <article class="card product">
   {image ? (
     <div class="cover"><img src={image} alt="" loading="lazy" /></div>
   ) : (
-    <div class="cover cover-ph" style={`--h: ${hue}`} aria-hidden="true">
+    <div class:list={['cover', 'cover-ph', { 'on-light': coverLight }]} style={`--c: ${coverColor}`} aria-hidden="true">
+      <span class="ph-dot"></span>
       <span class="ph-title">{title}</span>
       <span class="ph-mark">awa-lotus</span>
     </div>
