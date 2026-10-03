@@ -25,6 +25,11 @@
   --accent-soft: oklch(0.56 0.17 0 / 0.08);
   --grid: rgba(0, 0, 0, 0.05);
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 12px 32px -12px rgba(0, 0, 0, 0.14);
+  /* すりガラス: 背景を透かしてぼかす素材。縁に細い線と上辺のハイライト */
+  --glass-bg: rgba(255, 255, 255, 0.5);
+  --glass-edge: rgba(0, 0, 0, 0.08);
+  --glass-hi: rgba(255, 255, 255, 0.85);
+  --glass-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.22);
 
   --radius: 2px;
   --radius-sm: 2px;
@@ -60,6 +65,10 @@
     --accent-soft: oklch(0.76 0.12 0 / 0.12);
     --grid: rgba(255, 255, 255, 0.06);
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 16px 40px -16px rgba(0, 0, 0, 0.8);
+    --glass-bg: rgba(24, 24, 24, 0.42);
+    --glass-edge: rgba(255, 255, 255, 0.12);
+    --glass-hi: rgba(255, 255, 255, 0.1);
+    --glass-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.9);
   }
 }
 
@@ -112,15 +121,20 @@ h1, h2, h3 { line-height: 1.25; letter-spacing: -0.02em; font-weight: 700; }
 /* ------------------------------------------------------------------
    Header
    ------------------------------------------------------------------ */
-.site-header {
-  position: sticky; top: 0; z-index: 50;
-  background: color-mix(in srgb, var(--bg) 78%, transparent);
-  backdrop-filter: saturate(180%) blur(14px);
-  -webkit-backdrop-filter: saturate(180%) blur(14px);
+.site-header .header-inner {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  backdrop-filter: blur(22px) saturate(160%);
+  border: 1px solid var(--glass-edge);
+  box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow);
 }
-.header-inner {
+/* ヘッダーは上から少し浮いたすりガラスのバー。スクロールすると下の内容が透けてぼける */
+.site-header { position: sticky; top: 0; z-index: 50; padding-top: 12px; }
+.site-header .header-inner {
   display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-  height: 64px;
+  width: min(100% - 16px, calc(var(--wide) + 2.5rem)); margin-inline: auto;
+  height: 54px; padding-inline: 1.25rem; border-radius: 14px;
+  box-shadow: inset 0 1px 0 var(--glass-hi), 0 10px 30px -18px rgba(0, 0, 0, 0.25);
 }
 /* ロゴは文字だけ。蓮色の点(花托の実)を句点のように打つ。ワードマークと同じ形 */
 .logo {
@@ -214,17 +228,39 @@ main:has(> .band:last-child) { padding-bottom: 0; }
 /* ファーストビューは画面いっぱい。装飾は細い円と斜線の 2 本だけにして、ワードマークを主役にする */
 .intro {
   position: relative; isolation: isolate;
-  min-height: calc(100svh - 64px);
+  min-height: calc(100svh - 66px);
   display: flex; flex-direction: column; justify-content: flex-end;
   padding-block: 6.5rem 3.5rem;
 }
-/* 幾何学の線: グリッドから外して右にはみ出させる */
-.geo {
+/* 右のビジュアル: 幾何学の線(グリッドから外して右にはみ出させる)+蓮ピンクの円+すりガラスの板。
+   円はワードマークの点を大きくしたもの。ガラス越しにぼけて見える */
+.visual {
   position: absolute; z-index: -1; pointer-events: none;
   width: min(60vw, 620px); aspect-ratio: 1;
   right: max(-14vw, -180px); top: 50%; translate: 0 -56%;
+}
+.geo {
+  position: absolute; inset: 0; width: 100%; height: 100%;
   fill: none; stroke: var(--line-strong); stroke-width: 1;
   animation: geo-spin 120s linear infinite;
+}
+.disc {
+  position: absolute; left: 24%; top: 26%; width: 30%; aspect-ratio: 1;
+  border-radius: 50%; background: var(--lotus-petal);
+}
+.glass {
+  position: absolute; left: 38%; top: 34%; width: 40%; aspect-ratio: 3 / 4;
+  border-radius: 20px;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  backdrop-filter: blur(22px) saturate(160%);
+  border: 1px solid var(--glass-edge);
+  box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow);
+}
+.glass-label {
+  position: absolute; left: 1.1rem; bottom: 1rem;
+  font-family: var(--mono); font-size: 0.66rem; line-height: 1.6; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--fg-soft);
 }
 .geo * { vector-effect: non-scaling-stroke; }
 @keyframes geo-spin { to { rotate: 360deg; } }
@@ -337,6 +373,22 @@ main:has(> .band:last-child) { padding-bottom: 0; }
   transition: color 0.6s var(--ease), -webkit-text-stroke-color 0.6s var(--ease);
 }
 .project:hover .thumb-initials { color: var(--fg); -webkit-text-stroke-color: var(--fg); }
+/* ホバーで左下にすりガラスのラベル */
+.glass-chip {
+  position: absolute; left: 1rem; bottom: 1rem;
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.45rem 0.8rem; border-radius: 999px;
+  font-size: 0.78rem; color: var(--fg);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  backdrop-filter: blur(22px) saturate(160%);
+  border: 1px solid var(--glass-edge);
+  box-shadow: inset 0 1px 0 var(--glass-hi);
+  opacity: 0; translate: 0 8px;
+  transition: opacity 0.4s var(--ease), translate 0.5s var(--ease);
+}
+.glass-chip svg { width: 14px; height: 14px; }
+.project:hover .glass-chip { opacity: 1; translate: 0 0; }
 .project-body { padding-top: 1.1rem; }
 .project-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
 .project h3 { font-size: 1.2rem; font-weight: 600; letter-spacing: -0.02em; margin: 0; }
@@ -543,12 +595,13 @@ details summary:hover { color: var(--fg); }
 
 @media (max-width: 640px) {
   .container, .narrow { width: min(100% - 32px, var(--wide)); }
-  .header-inner { height: auto; flex-direction: column; align-items: stretch; gap: 0.25rem; padding-block: 0.75rem 0.5rem; }
+  .site-header { padding-top: 8px; }
+  .site-header .header-inner { height: auto; flex-direction: column; align-items: stretch; gap: 0.1rem; padding: 0.7rem 0.5rem 0.2rem; }
   .site-nav { gap: 1.25rem; }
   .site-nav a { padding-block: 0.6rem; }
   .intro { min-height: calc(100svh - 100px); padding-block: 4rem 2.5rem; }
   .intro-meta { grid-template-columns: 1fr; gap: 1rem; margin-top: 2rem; margin-right: 0; }
-  .geo { width: 110vw; right: -45vw; top: 46%; }
+  .visual { width: 110vw; right: -45vw; top: 46%; }
   .scroll-cue { display: none; }
   .marquee { margin-top: 5rem; }
   .section { padding-top: 4rem; }
@@ -582,9 +635,19 @@ details summary:hover { color: var(--fg); }
   @keyframes zoom-out { from { scale: 1.18; } to { scale: 1; } }
 
   /* ファーストビューは層ごとに速さを変える(パララックス)。円は回りながら沈み、ワードマークは奥へ退く */
-  .geo { animation: geo-spin 120s linear infinite, geo-sink linear both; animation-range: normal, 0 100vh; }
+  /* 円とガラスは別の速さで動くので、スクロールに合わせてガラス越しのぼけ方が変わる */
+  .visual { animation: visual-sink linear both; animation-range: 0 100vh; }
+  :root .visual { animation-timeline: scroll(root); }
+  @keyframes visual-sink { to { transform: translateY(16vh); } }
+  .geo { animation: geo-spin 120s linear infinite, geo-turn linear both; animation-range: normal, 0 100vh; }
   :root .geo { animation-timeline: auto, scroll(root); }
-  @keyframes geo-sink { to { transform: translateY(22vh) rotate(-75deg) scale(1.25); } }
+  @keyframes geo-turn { to { transform: rotate(-75deg) scale(1.2); } }
+  .disc { animation: disc-drift linear both; animation-range: 0 100vh; }
+  :root .disc { animation-timeline: scroll(root); }
+  @keyframes disc-drift { to { transform: translate(18%, 40%); } }
+  .glass { animation: glass-drift linear both; animation-range: 0 100vh; }
+  :root .glass { animation-timeline: scroll(root); }
+  @keyframes glass-drift { to { transform: translateY(-14%); } }
   .wordmark { transform-origin: left bottom; }
   .wordmark.reveal { animation: reveal 0.9s var(--ease) both, wm-recede linear both; animation-range: normal, 0 90vh; }
   :root .wordmark.reveal { animation-timeline: auto, scroll(root); }

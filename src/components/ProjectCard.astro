@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
 import { url } from '../lib';
 
 interface Props {
@@ -23,6 +24,7 @@ const initials = /^[\x00-\x7f]+$/.test(title)
         <span class="thumb-initials">{initials}</span>
       </div>
     )}
+    <span class="glass-chip" aria-hidden="true">View <Icon name="arrow-up-right" /></span>
   </div>
   <div class="project-body">
     <div class="project-head">

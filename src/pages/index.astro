@@ -24,14 +24,19 @@ const index = [
   { href: '/items/', label: 'Items', count: items.length },
 ];
 const pad = (n: number) => String(n).padStart(2, '0');
+const year = new Date().getFullYear();
 ---
 
 <Base>
   <section class="intro container">
-    <svg class="geo" viewBox="0 0 600 600" aria-hidden="true">
-      <circle cx="300" cy="300" r="290" />
-      <line x1="40" y1="600" x2="600" y2="40" />
-    </svg>
+    <div class="visual" aria-hidden="true">
+      <svg class="geo" viewBox="0 0 600 600">
+        <circle cx="300" cy="300" r="290" />
+        <line x1="40" y1="600" x2="600" y2="40" />
+      </svg>
+      <span class="disc"></span>
+      <span class="glass"><span class="glass-label">Portfolio<br />{year}</span></span>
+    </div>
     <h1 class="wordmark reveal">{SITE.title}<span class="dot" aria-hidden="true">.</span></h1>
     <div class="intro-meta reveal">
       <p class="intro-desc">{SITE.description}</p>
