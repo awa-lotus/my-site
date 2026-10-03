@@ -1,7 +1,8 @@
 ---
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { formatDate } from '../../lib';
+import Icon from '../../components/Icon.astro';
+import { formatDate, url } from '../../lib';
 import { getPosts } from '../../data';
 
 export async function getStaticPaths() {
@@ -15,13 +16,17 @@ const { title, description, pubDate, updatedDate, tags } = post.data;
 ---
 
 <Base title={title} description={description}>
-  <article class="prose">
-    <h1>{title}</h1>
-    <p class="muted">
-      <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
-      {updatedDate && <> (更新: {formatDate(updatedDate)})</>}
-    </p>
-    {tags.length > 0 && <ul class="tags">{tags.map((t) => <li class="tag">{t}</li>)}</ul>}
-    <Content />
+  <article class="narrow">
+    <header class="article-head">
+      <a class="back" href={url('/blog/')}><Icon name="arrow-left" />Blog</a>
+      <h1 class="page-title">{title}</h1>
+      <p class="page-lead">{description}</p>
+      <div class="article-meta">
+        <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+        {updatedDate && <span>更新 {formatDate(updatedDate)}</span>}
+        {tags.length > 0 && <ul class="chips">{tags.map((t) => <li class="chip">#{t}</li>)}</ul>}
+      </div>
+    </header>
+    <div class="prose"><Content /></div>
   </article>
 </Base>

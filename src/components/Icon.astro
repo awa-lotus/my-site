@@ -1,0 +1,49 @@
+---
+// 小さなインライン SVG アイコン。色は currentColor を継承する。
+interface Props {
+  name: 'lotus' | 'arrow-right' | 'arrow-left' | 'arrow-up-right' | 'github' | 'rss' | 'star';
+  class?: string;
+}
+
+const { name, class: className } = Astro.props;
+---
+
+{name === 'lotus' && (
+  <svg class={className} viewBox="0 0 32 32" fill="none" aria-hidden="true">
+    <path d="M16 5.5c3.2 3 4.8 6.6 4.8 10.2 0 3.6-1.8 6.6-4.8 8.8-3-2.2-4.8-5.2-4.8-8.8 0-3.6 1.6-7.2 4.8-10.2Z" fill="currentColor" />
+    <path d="M16 24.5c-4.4.2-9.6-2-11.6-7.6 3.6-.6 6.6.4 8.6 2.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M16 24.5c4.4.2 9.6-2 11.6-7.6-3.6-.6-6.6.4-8.6 2.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M9 27h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity=".5" />
+  </svg>
+)}
+{name === 'arrow-right' && (
+  <svg class={className} viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
+    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+)}
+{name === 'arrow-left' && (
+  <svg class={className} viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
+    <path d="M13 8H3M7 4 3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+)}
+{name === 'arrow-up-right' && (
+  <svg class={className} viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
+    <path d="M5 11 11 5M6 5h5v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+)}
+{name === 'github' && (
+  <svg class={className} viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
+    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
+  </svg>
+)}
+{name === 'rss' && (
+  <svg class={className} viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
+    <path d="M3 3a10 10 0 0 1 10 10M3 7a6 6 0 0 1 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+    <circle cx="3.5" cy="12.5" r="1.25" fill="currentColor" />
+  </svg>
+)}
+{name === 'star' && (
+  <svg class={className} viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+    <path d="M8 1.2l2.06 4.3 4.7.6-3.44 3.27.87 4.67L8 11.77l-4.19 2.27.87-4.67L1.24 6.1l4.7-.6L8 1.2Z" />
+  </svg>
+)}

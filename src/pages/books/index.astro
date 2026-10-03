@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import { formatDate } from '../../lib';
 
@@ -18,31 +19,32 @@ const groups = (Object.keys(STATUS) as (keyof typeof STATUS)[])
 ---
 
 <Base title="Books" description="読んだ本の記録">
-  <h1>Books</h1>
-  <p class="lead">読んだ本と感想。</p>
-  {groups.map(({ status, items }) => (
-    <section>
-      <h2>{STATUS[status]} ({items.length})</h2>
-      <div class="list">
-        {items.map(({ book, Content }) => (
-          <ProductCard
-            title={book.data.title}
-            subtitle={[book.data.author, book.data.readAt && formatDate(book.data.readAt)].filter(Boolean).join(' · ')}
-            image={book.data.image}
-            rating={book.data.rating}
-            asin={book.data.asin}
-            links={book.data.links}
-            tags={book.data.tags}
-          >
-            {book.body?.trim() && (
-              <details>
-                <summary>感想</summary>
-                <div class="prose"><Content /></div>
-              </details>
-            )}
-          </ProductCard>
-        ))}
-      </div>
-    </section>
-  ))}
+  <div class="container">
+    <PageHeader eyebrow={`Books / ${books.length}`} title="Books" lead="読んだ本と感想。" />
+    {groups.map(({ status, items }) => (
+      <section class="group">
+        <h2 class="group-title">{STATUS[status]}<span class="count">{items.length}</span></h2>
+        <div class="grid grid-fill">
+          {items.map(({ book, Content }) => (
+            <ProductCard
+              title={book.data.title}
+              subtitle={[book.data.author, book.data.readAt && formatDate(book.data.readAt)].filter(Boolean).join(' · ')}
+              image={book.data.image}
+              rating={book.data.rating}
+              asin={book.data.asin}
+              links={book.data.links}
+              tags={book.data.tags}
+            >
+              {book.body?.trim() && (
+                <details>
+                  <summary>感想</summary>
+                  <div class="prose"><Content /></div>
+                </details>
+              )}
+            </ProductCard>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
 </Base>

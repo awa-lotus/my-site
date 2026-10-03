@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
 import PostList from '../../components/PostList.astro';
 import { getPosts } from '../../data';
 
@@ -7,6 +8,8 @@ const posts = await getPosts();
 ---
 
 <Base title="Blog" description="ブログ記事の一覧">
-  <h1>Blog</h1>
-  <PostList posts={posts} />
+  <div class="container">
+    <PageHeader eyebrow={`Blog / ${posts.length}`} title="Blog" lead="作りながら考えたこと、学んだこと。" />
+    <PostList posts={posts} />
+  </div>
 </Base>

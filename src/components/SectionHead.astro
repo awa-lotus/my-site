@@ -1,0 +1,19 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  num: string;
+  title: string;
+  label?: string;
+  href?: string;
+  more?: string;
+}
+
+const { num, title, label, href, more = 'View all' } = Astro.props;
+---
+
+<div class="section-head scroll-in">
+  <span class="section-num">{num}</span>
+  <h2 class="section-title">{title}{label && <span class="section-label">{label}</span>}</h2>
+  {href && <a class="more" href={href}>{more} <Icon name="arrow-right" class="arrow" /></a>}
+</div>

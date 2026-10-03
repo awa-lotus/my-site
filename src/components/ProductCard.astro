@@ -1,5 +1,6 @@
 ---
-import { amazonUrl, stars } from '../lib';
+import Icon from './Icon.astro';
+import { amazonUrl } from '../lib';
 
 interface Props {
   title: string;
@@ -13,22 +14,36 @@ interface Props {
 
 const { title, subtitle, image, rating, asin, links = [], tags = [] } = Astro.props;
 const buyLinks = [...(asin ? [{ label: 'Amazon', url: amazonUrl(asin) }] : []), ...links];
+// 画像がないときの表紙。白か黒の地に蓮の色を 1 つ、タイトルから決める
+const LOTUS = ['--lotus-petal', '--lotus-leaf', '--lotus-pod', '--lotus-bud'];
+const hash = [...title].reduce((h, c) => (h * 31 + c.codePointAt(0)!) % 9973, 7);
+const coverColor = `var(${LOTUS[hash % LOTUS.length]})`;
+const coverLight = Math.floor(hash / LOTUS.length) % 2 === 1;
 ---
 
-<article class:list={['card', 'product', { 'no-image': !image }]}>
-  {image && <img src={image} alt="" loading="lazy" />}
+<article class="card product">
+  {image ? (
+    <div class="cover"><img src={image} alt="" loading="lazy" /></div>
+  ) : (
+    <div class:list={['cover', 'cover-ph', { 'on-light': coverLight }]} style={`--c: ${coverColor}`} aria-hidden="true">
+      <span class="ph-dot"></span>
+      <span class="ph-title">{title}</span>
+    </div>
+  )}
   <div>
     <h3>{title}</h3>
-    {subtitle && <p class="muted">{subtitle}</p>}
-    {rating && <p class="stars" aria-label={`評価 ${rating} / 5`}>{stars(rating)}</p>}
-    <slot />
-    {tags.length > 0 && (
-      <ul class="tags">{tags.map((t) => <li class="tag">{t}</li>)}</ul>
+    {subtitle && <p class="sub">{subtitle}</p>}
+    {rating && (
+      <p class="stars" role="img" aria-label={`評価 ${rating} / 5`}>
+        {Array.from({ length: 5 }, (_, i) => <Icon name="star" class={i < rating ? undefined : 'off'} />)}
+      </p>
     )}
+    <slot />
+    {tags.length > 0 && <ul class="chips">{tags.map((t) => <li class="chip chip-accent">{t}</li>)}</ul>}
     {buyLinks.length > 0 && (
       <div class="buy">
         {buyLinks.map((l) => (
-          <a href={l.url} target="_blank" rel="sponsored noopener">{l.label}で見る</a>
+          <a href={l.url} target="_blank" rel="sponsored noopener">{l.label} <Icon name="arrow-up-right" /></a>
         ))}
       </div>
     )}

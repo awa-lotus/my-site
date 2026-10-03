@@ -1,24 +1,90 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import { SITE } from '../consts';
+import SectionHead from '../components/SectionHead.astro';
+import { PROFILE, SITE } from '../consts';
 import { getPosts, getProjects } from '../data';
 import { url } from '../lib';
 
-const posts = (await getPosts()).slice(0, 5);
-const projects = (await getProjects()).filter((p) => p.data.featured).slice(0, 3);
+const allPosts = await getPosts();
+const projects = await getProjects();
+const books = await getCollection('books');
+const items = await getCollection('items');
+
+const posts = allPosts.slice(0, 5);
+// 注目のプロジェクトを先頭に
+const works = [...projects.filter((p) => p.data.featured), ...projects.filter((p) => !p.data.featured)].slice(0, 6);
+
+const index = [
+  { href: '/projects/', label: 'Works', count: projects.length },
+  { href: '/blog/', label: 'Blog', count: allPosts.length },
+  { href: '/books/', label: 'Books', count: books.length },
+  { href: '/items/', label: 'Items', count: items.length },
+];
+const pad = (n: number) => String(n).padStart(2, '0');
+const year = new Date().getFullYear();
 ---
 
 <Base>
-  <h1>こんにちは、{SITE.author} です。</h1>
-  <p class="lead">{SITE.description}</p>
+  <section class="intro container">
+    <div class="visual" aria-hidden="true">
+      <svg class="geo" viewBox="0 0 600 600">
+        <circle cx="300" cy="300" r="290" />
+        <line x1="40" y1="600" x2="600" y2="40" />
+      </svg>
+      <span class="disc"></span>
+      <span class="glass"><span class="glass-label">Portfolio<br />{year}</span></span>
+    </div>
+    <h1 class="wordmark reveal">{SITE.title}<span class="dot" aria-hidden="true">.</span></h1>
+    <div class="intro-meta reveal">
+      <p class="intro-desc">{SITE.description}</p>
+      <ul class="intro-index">
+        {index.map((i) => (
+          <li><a href={url(i.href)}>{i.label}<sup class="n">{pad(i.count)}</sup></a></li>
+        ))}
+      </ul>
+    </div>
+    <a class="scroll-cue" href="#works" aria-label="Works へ">Scroll</a>
+  </section>
 
-  <h2>Projects</h2>
-  <div class="list">{projects.map((project) => <ProjectCard project={project} />)}</div>
-  <a href={url('/projects/')}>すべてのプロジェクト →</a>
+  <div class="container">
+    <section class="section" id="works">
+      <SectionHead num="01" title="Works" label="作ったもの" href={url('/projects/')} />
+      <div class="grid">{works.map((project) => <ProjectCard project={project} />)}</div>
+    </section>
+  </div>
 
-  <h2>Latest posts</h2>
-  <PostList posts={posts} />
-  <a href={url('/blog/')}>すべての記事 →</a>
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      {[0, 1].map(() => (
+        <span>{index.map((i) => <>{i.label}<i></i></>)}</span>
+      ))}
+    </div>
+  </div>
+
+  <div class="band band-flush">
+    <div class="container">
+      <section class="section">
+        <SectionHead num="02" title="Writing" label="書いたこと" href={url('/blog/')} />
+        <PostList posts={posts} />
+      </section>
+    </div>
+  </div>
+
+  <div class="container">
+    <section class="section about-teaser">
+      <SectionHead num="03" title="About" label="人となり" href={url('/about/')} more="Read more" />
+      <div class="about-grid scroll-in">
+        {PROFILE.bio && <p class="about-bio">{PROFILE.bio}</p>}
+        <dl class="spec">
+          <dt>Skills</dt>
+          <dd><ul>{PROFILE.skills.map((s) => <li>{s}</li>)}</ul></dd>
+          <dt>Interests</dt>
+          <dd>Books · Tools · Writing</dd>
+        </dl>
+      </div>
+    </section>
+  </div>
 </Base>

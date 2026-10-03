@@ -1,13 +1,15 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import { getProjects } from '../../data';
 
 const projects = await getProjects();
 ---
 
-<Base title="Projects" description="作ったものの一覧">
-  <h1>Projects</h1>
-  <p class="lead">これまでに作ったもの。</p>
-  <div class="list">{projects.map((project) => <ProjectCard project={project} />)}</div>
+<Base title="Works" description="作ったものの一覧">
+  <div class="container">
+    <PageHeader eyebrow={`Works / ${projects.length}`} title="Works" lead="これまでに作ったもの。" />
+    <div class="grid">{projects.map((project) => <ProjectCard project={project} />)}</div>
+  </div>
 </Base>
