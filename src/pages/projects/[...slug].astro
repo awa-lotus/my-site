@@ -18,8 +18,8 @@ const { title, description, tech, repo, url, image, date } = project.data;
 <Base title={title} description={description}>
   <article class="narrow">
     <header class="article-head">
-      <a class="back" href={siteUrl('/projects/')}><Icon name="arrow-left" />Projects</a>
-      <p class="eyebrow">Project · {date.getFullYear()}</p>
+      <a class="back" href={siteUrl('/projects/')}><Icon name="arrow-left" />Works</a>
+      <p class="eyebrow">Work · {date.getFullYear()}</p>
       <h1 class="page-title">{title}</h1>
       <p class="page-lead">{description}</p>
       {tech.length > 0 && <div class="article-meta"><ul class="chips">{tech.map((t) => <li class="chip">{t}</li>)}</ul></div>}

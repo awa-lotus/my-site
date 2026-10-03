@@ -1,17 +1,8 @@
 export const SITE = {
-  title: 'awa-lotus',
+  title: 'L-Works',
   description: '開発のポートフォリオ、ブログ、読んだ本と愛用品の記録。',
   author: 'awa',
   lang: 'ja',
-  github: 'https://github.com/awa-lotus',
-  // X などのアカウントがあれば追加する(空文字なら非表示)
-  x: '',
-};
-
-// トップページのヒーロー。lines の最後の行がグラデーションになる。
-export const HERO = {
-  status: 'Developer portfolio & notes',
-  lines: ['作ったもの、', '読んだもの、', '使っているもの。'],
 };
 
 // アフィリエイト設定。審査に通ったら ID を入れる。空のままなら素のリンクになる。
@@ -22,7 +13,7 @@ export const AFFILIATE = {
 
 export const NAV = [
   { href: '/', label: 'Home' },
-  { href: '/projects/', label: 'Projects' },
+  { href: '/projects/', label: 'Works' },
   { href: '/blog/', label: 'Blog' },
   { href: '/books/', label: 'Books' },
   { href: '/items/', label: 'Items' },

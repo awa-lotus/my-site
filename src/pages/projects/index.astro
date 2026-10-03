@@ -7,9 +7,9 @@ import { getProjects } from '../../data';
 const projects = await getProjects();
 ---
 
-<Base title="Projects" description="作ったものの一覧">
+<Base title="Works" description="作ったものの一覧">
   <div class="container">
-    <PageHeader eyebrow={`Projects / ${projects.length}`} title="Projects" lead="これまでに作ったもの。" />
+    <PageHeader eyebrow={`Works / ${projects.length}`} title="Works" lead="これまでに作ったもの。" />
     <div class="grid">{projects.map((project) => <ProjectCard project={project} />)}</div>
   </div>
 </Base>
