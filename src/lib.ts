@@ -15,8 +15,3 @@ export function amazonUrl(asin: string): string {
 export function formatDate(date: Date): string {
   return date.toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' });
 }
-
-export function stars(rating?: number): string {
-  if (!rating) return '';
-  return '★'.repeat(rating) + '☆'.repeat(5 - rating);
-}

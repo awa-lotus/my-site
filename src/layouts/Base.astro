@@ -1,5 +1,12 @@
 ---
+import '@fontsource-variable/geist/wght.css';
+import '@fontsource/geist-mono/400.css';
+import '@fontsource/geist-mono/500.css';
+import '@fontsource/zen-kaku-gothic-new/400.css';
+import '@fontsource/zen-kaku-gothic-new/500.css';
+import '@fontsource/zen-kaku-gothic-new/700.css';
 import '../styles/global.css';
+import Icon from '../components/Icon.astro';
 import { SITE, NAV } from '../consts';
 import { url } from '../lib';
 
@@ -27,6 +34,8 @@ const isActive = (href: string) =>
     <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
     <link rel="sitemap" href={url('/sitemap-index.xml')} />
     <link rel="alternate" type="application/rss+xml" title={SITE.title} href={url('/rss.xml')} />
+    <meta name="theme-color" content="#f6f5f1" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b0b0d" media="(prefers-color-scheme: dark)" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
@@ -36,8 +45,8 @@ const isActive = (href: string) =>
   <body>
     <header class="site-header">
       <div class="container header-inner">
-        <a class="logo" href={url('/')}>{SITE.title}</a>
-        <nav>
+        <a class="logo" href={url('/')}><Icon name="lotus" />{SITE.title}</a>
+        <nav class="site-nav" aria-label="メイン">
           {NAV.map((item) => (
             <a href={url(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>
               {item.label}
@@ -46,20 +55,35 @@ const isActive = (href: string) =>
         </nav>
       </div>
     </header>
-    <main class="container">
+    <main>
       <slot />
     </main>
     <footer class="site-footer">
       <div class="container">
-        <p class="disclosure">
-          当サイトはアフィリエイトプログラム(Amazon アソシエイトなど)に参加しており、紹介リンクから購入されると運営者に報酬が入ることがあります。
-        </p>
-        <p>
-          &copy; {new Date().getFullYear()} {SITE.author}{' · '}
-          <a href={SITE.github}>GitHub</a>
-          {SITE.x && <>{' · '}<a href={SITE.x}>X</a></>}
-          {' · '}<a href={url('/rss.xml')}>RSS</a>
-        </p>
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="logo" href={url('/')}><Icon name="lotus" />{SITE.title}</a>
+            <p>{SITE.description}</p>
+          </div>
+          <div class="footer-col">
+            <h2>Sitemap</h2>
+            <ul>{NAV.map((item) => <li><a href={url(item.href)}>{item.label}</a></li>)}</ul>
+          </div>
+          <div class="footer-col">
+            <h2>Elsewhere</h2>
+            <ul>
+              <li><a href={SITE.github}>GitHub</a></li>
+              {SITE.x && <li><a href={SITE.x}>X</a></li>}
+              <li><a href={url('/rss.xml')}>RSS</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p class="disclosure">
+            当サイトはアフィリエイトプログラム(Amazon アソシエイトなど)に参加しており、紹介リンクから購入されると運営者に報酬が入ることがあります。
+          </p>
+          <p class="copy">&copy; {new Date().getFullYear()} {SITE.author}</p>
+        </div>
       </div>
     </footer>
   </body>

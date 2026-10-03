@@ -1,20 +1,33 @@
 ---
 import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import PageHeader from '../components/PageHeader.astro';
 import { SITE } from '../consts';
 ---
 
 <Base title="About">
-  <h1>About</h1>
-  <div class="prose">
-    <p>{SITE.author} の個人サイトです。ここに自己紹介を書きます。</p>
-    <h2>できること</h2>
-    <ul>
-      <li>TypeScript / Web フロントエンド</li>
-      <li>Bot 開発</li>
-    </ul>
-    <h2>リンク</h2>
-    <ul>
-      <li><a href={SITE.github}>GitHub</a></li>
-    </ul>
+  <div class="container">
+    <PageHeader eyebrow="About" title="About" />
+    <div class="about">
+      <aside class="about-aside">
+        <div class="avatar"><Icon name="lotus" /></div>
+        <div>
+          <p class="name">{SITE.author}</p>
+          <p class="handle">@{SITE.title}</p>
+        </div>
+      </aside>
+      <div class="prose">
+        <p>{SITE.author} の個人サイトです。ここに自己紹介を書きます。</p>
+        <h2>できること</h2>
+        <ul>
+          <li>TypeScript / Web フロントエンド</li>
+          <li>Bot 開発</li>
+        </ul>
+        <h2>リンク</h2>
+        <ul>
+          <li><a href={SITE.github}>GitHub</a></li>
+        </ul>
+      </div>
+    </div>
   </div>
 </Base>

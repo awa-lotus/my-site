@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
 import { url } from '../lib';
 
 interface Props {
@@ -7,16 +8,15 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { title, description, tech, repo, url: demo } = project.data;
+const { title, description, tech, date } = project.data;
 ---
 
-<article class="card">
+<article class="card card-link project">
+  <div class="project-meta">
+    <span>{date.getFullYear()}</span>
+    <span class="arrow"><Icon name="arrow-right" /></span>
+  </div>
   <h3><a href={url(`/projects/${project.id}/`)}>{title}</a></h3>
   <p>{description}</p>
-  {tech.length > 0 && <ul class="tags">{tech.map((t) => <li class="tag">{t}</li>)}</ul>}
-  <p class="muted">
-    {repo && <a href={repo}>Repository</a>}
-    {repo && demo && ' · '}
-    {demo && <a href={demo}>Demo</a>}
-  </p>
+  {tech.length > 0 && <ul class="chips">{tech.map((t) => <li class="chip">{t}</li>)}</ul>}
 </article>

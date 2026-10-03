@@ -1,9 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
 import { url } from '../lib';
 ---
 
 <Base title="Not Found">
-  <h1>ページが見つかりません</h1>
-  <p><a href={url('/')}>トップへ戻る</a></p>
+  <div class="container notfound">
+    <p class="code">404</p>
+    <p class="muted">ページが見つかりません。</p>
+    <a class="btn" href={url('/')}><Icon name="arrow-left" />トップへ戻る</a>
+  </div>
 </Base>

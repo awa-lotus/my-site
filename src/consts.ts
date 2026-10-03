@@ -8,6 +8,12 @@ export const SITE = {
   x: '',
 };
 
+// トップページのヒーロー。lines の最後の行がグラデーションになる。
+export const HERO = {
+  status: 'Developer portfolio & notes',
+  lines: ['作ったもの、', '読んだもの、', '使っているもの。'],
+};
+
 // アフィリエイト設定。審査に通ったら ID を入れる。空のままなら素のリンクになる。
 export const AFFILIATE = {
   // Amazon アソシエイトのトラッキング ID(例: 'awalotus-22')

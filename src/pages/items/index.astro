@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
 import ProductCard from '../../components/ProductCard.astro';
 
 const items = await getCollection('items');
@@ -11,27 +12,29 @@ const categories = [...new Set(items.map((i) => i.data.category))].sort();
 ---
 
 <Base title="Items" description="愛用しているもの">
-  <h1>Items</h1>
-  <p class="lead">普段使っているもの・おすすめのもの。</p>
-  {categories.map((category) => (
-    <section>
-      <h2>{category}</h2>
-      <div class="list">
-        {entries
-          .filter(({ item }) => item.data.category === category)
-          .map(({ item, Content }) => (
-            <ProductCard
-              title={item.data.name}
-              subtitle={item.data.brand}
-              image={item.data.image}
-              rating={item.data.rating}
-              asin={item.data.asin}
-              links={item.data.links}
-            >
-              <div class="prose"><Content /></div>
-            </ProductCard>
-          ))}
-      </div>
-    </section>
-  ))}
+  <div class="container">
+    <PageHeader eyebrow={`Items / ${items.length}`} title="Items" lead="普段使っているもの・おすすめのもの。" />
+    {categories.map((category) => {
+      const inCategory = entries.filter(({ item }) => item.data.category === category);
+      return (
+        <section class="group">
+          <h2 class="group-title">{category}<span class="count">{inCategory.length}</span></h2>
+          <div class="grid grid-fill">
+            {inCategory.map(({ item, Content }) => (
+              <ProductCard
+                title={item.data.name}
+                subtitle={item.data.brand}
+                image={item.data.image}
+                rating={item.data.rating}
+                asin={item.data.asin}
+                links={item.data.links}
+              >
+                <div class="prose"><Content /></div>
+              </ProductCard>
+            ))}
+          </div>
+        </section>
+      );
+    })}
+  </div>
 </Base>

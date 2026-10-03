@@ -1,7 +1,9 @@
 ---
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
 import { getProjects } from '../../data';
+import { url as siteUrl } from '../../lib';
 
 export async function getStaticPaths() {
   const projects = await getProjects();
@@ -10,20 +12,25 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { Content } = await render(project);
-const { title, description, tech, repo, url, image } = project.data;
+const { title, description, tech, repo, url, image, date } = project.data;
 ---
 
 <Base title={title} description={description}>
-  <article class="prose">
-    <h1>{title}</h1>
-    <p class="lead">{description}</p>
-    {tech.length > 0 && <ul class="tags">{tech.map((t) => <li class="tag">{t}</li>)}</ul>}
-    <p>
-      {repo && <a href={repo}>Repository</a>}
-      {repo && url && ' · '}
-      {url && <a href={url}>Demo</a>}
-    </p>
-    {image && <img src={image} alt="" />}
-    <Content />
+  <article class="narrow">
+    <header class="article-head">
+      <a class="back" href={siteUrl('/projects/')}><Icon name="arrow-left" />Projects</a>
+      <p class="eyebrow">Project · {date.getFullYear()}</p>
+      <h1 class="page-title">{title}</h1>
+      <p class="page-lead">{description}</p>
+      {tech.length > 0 && <div class="article-meta"><ul class="chips">{tech.map((t) => <li class="chip">{t}</li>)}</ul></div>}
+      {(repo || url) && (
+        <div class="ext-links">
+          {url && <a class="btn btn-primary" href={url}>Demo <Icon name="arrow-up-right" /></a>}
+          {repo && <a class="btn" href={repo}><Icon name="github" />Repository</a>}
+        </div>
+      )}
+    </header>
+    {image && <img class="hero-image" src={image} alt="" />}
+    <div class="prose"><Content /></div>
   </article>
 </Base>

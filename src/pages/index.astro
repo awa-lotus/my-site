@@ -1,24 +1,69 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
 import PostList from '../components/PostList.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import { SITE } from '../consts';
+import SectionHead from '../components/SectionHead.astro';
+import { HERO, SITE } from '../consts';
 import { getPosts, getProjects } from '../data';
 import { url } from '../lib';
 
-const posts = (await getPosts()).slice(0, 5);
-const projects = (await getProjects()).filter((p) => p.data.featured).slice(0, 3);
+const allPosts = await getPosts();
+const allProjects = await getProjects();
+const books = await getCollection('books');
+const items = await getCollection('items');
+
+const posts = allPosts.slice(0, 5);
+const projects = allProjects.filter((p) => p.data.featured).slice(0, 4);
+
+const tiles = [
+  { href: '/projects/', label: 'Projects', desc: '作ったもの', count: allProjects.length },
+  { href: '/blog/', label: 'Blog', desc: '書いたこと', count: allPosts.length },
+  { href: '/books/', label: 'Books', desc: '読んだ本', count: books.length },
+  { href: '/items/', label: 'Items', desc: '愛用品', count: items.length },
+];
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
 <Base>
-  <h1>こんにちは、{SITE.author} です。</h1>
-  <p class="lead">{SITE.description}</p>
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="container">
+      <p class="status reveal"><span class="dot"></span>{HERO.status}</p>
+      <h1 class="hero-title reveal">
+        {HERO.lines.map((line, i) => <span class={i === HERO.lines.length - 1 ? 'grad' : undefined}>{line}</span>)}
+      </h1>
+      <p class="hero-lead reveal">{SITE.description}</p>
+      <div class="hero-actions reveal">
+        <a class="btn btn-primary" href={url('/projects/')}>Projects を見る <Icon name="arrow-right" /></a>
+        <a class="btn" href={SITE.github}><Icon name="github" />GitHub</a>
+      </div>
+    </div>
+  </section>
 
-  <h2>Projects</h2>
-  <div class="list">{projects.map((project) => <ProjectCard project={project} />)}</div>
-  <a href={url('/projects/')}>すべてのプロジェクト →</a>
+  <div class="container">
+    <nav class="tiles" aria-label="コンテンツ">
+      {tiles.map((t) => (
+        <a class="tile" href={url(t.href)}>
+          <span class="tile-top"><span>/{t.label.toLowerCase()}</span><Icon name="arrow-up-right" class="arrow" /></span>
+          <span>
+            <span class="tile-count">{pad(t.count)}</span>
+            <span class="tile-label">{t.label}</span>
+            <span class="tile-desc">{t.desc}</span>
+          </span>
+        </a>
+      ))}
+    </nav>
 
-  <h2>Latest posts</h2>
-  <PostList posts={posts} />
-  <a href={url('/blog/')}>すべての記事 →</a>
+    <section class="section">
+      <SectionHead num="01" title="Selected work" href={url('/projects/')} />
+      <div class="grid">{projects.map((project) => <ProjectCard project={project} />)}</div>
+    </section>
+
+    <section class="section">
+      <SectionHead num="02" title="Latest writing" href={url('/blog/')} />
+      <PostList posts={posts} />
+    </section>
+  </div>
 </Base>
