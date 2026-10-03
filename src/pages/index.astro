@@ -33,6 +33,14 @@ const [head, ...rest] = SITE.title.split('-');
     <span class="cross cross-tl" aria-hidden="true"></span>
     <span class="cross cross-tr" aria-hidden="true"></span>
     <span class="sys" aria-hidden="true">Portfolio / {buildDate}</span>
+    <svg class="geo" viewBox="0 0 600 600" aria-hidden="true">
+      <circle class="geo-ring" cx="300" cy="300" r="290" />
+      <circle class="geo-ring geo-dash" cx="300" cy="300" r="214" />
+      <path class="geo-arc" d="M 300 10 A 290 290 0 0 1 590 300" />
+      <line x1="0" y1="600" x2="600" y2="0" />
+      <line x1="300" y1="0" x2="300" y2="600" class="geo-thin" />
+      <circle class="geo-dot" cx="300" cy="300" r="4" />
+    </svg>
     <h1 class="wordmark reveal">
       {rest.length > 0 ? <>{head}<span class="wm-dash">-</span>{rest.join('-')}</> : SITE.title}
     </h1>
@@ -44,16 +52,25 @@ const [head, ...rest] = SITE.title.split('-');
         ))}
       </ul>
     </div>
+    <a class="scroll-cue" href="#works" aria-label="Works へ">Scroll</a>
   </section>
 
   <div class="container">
-    <section class="section">
+    <section class="section" id="works">
       <SectionHead num="01" title="Works" label="作ったもの" href={url('/projects/')} />
       <div class="grid">{works.map((project) => <ProjectCard project={project} />)}</div>
     </section>
   </div>
 
-  <div class="band">
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      {[0, 1].map(() => (
+        <span>{index.map((i) => <>{i.label}<i>/</i></>)}</span>
+      ))}
+    </div>
+  </div>
+
+  <div class="band band-flush">
     <div class="container">
       <section class="section">
         <SectionHead num="02" title="Writing" label="書いたこと" href={url('/blog/')} />

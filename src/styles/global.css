@@ -148,7 +148,7 @@ h1, h2, h3 { line-height: 1.25; letter-spacing: -0.02em; font-weight: 700; }
 /* ------------------------------------------------------------------
    Layout
    ------------------------------------------------------------------ */
-main { flex: 1; padding-block: 0 6rem; }
+main { flex: 1; padding-block: 0 6rem; overflow-x: clip; }
 
 .page-head { padding-block: 5rem 2.5rem; }
 .eyebrow {
@@ -203,7 +203,13 @@ main:has(> .band:last-child) { padding-bottom: 0; }
 /* ------------------------------------------------------------------
    Intro (home)
    ------------------------------------------------------------------ */
-.intro { position: relative; isolation: isolate; padding-block: 6.5rem 1rem; }
+/* ファーストビューは画面いっぱい。ワードマークは下に置き、上の余白で間をつくる */
+.intro {
+  position: relative; isolation: isolate;
+  min-height: calc(100svh - 64px);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding-block: 6.5rem 3.5rem;
+}
 /* テック感: 方眼(設計図)とトンボ風のクロスマーク。うっすら見える程度に */
 .intro::before {
   content: ''; position: absolute; z-index: -1; inset: 2rem -1px 0;
@@ -225,6 +231,39 @@ main:has(> .band:last-child) { padding-bottom: 0; }
   font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; color: var(--muted);
   text-transform: uppercase;
 }
+/* 幾何学の線: 大きな円と対角線をワードマークの背後に。グリッドから外して右にはみ出させる */
+.geo {
+  position: absolute; z-index: -1; pointer-events: none;
+  width: min(62vw, 640px); aspect-ratio: 1;
+  right: max(-14vw, -180px); top: 50%; translate: 0 -54%;
+  fill: none; stroke: var(--line-strong); stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  animation: geo-spin 90s linear infinite;
+}
+.geo * { vector-effect: non-scaling-stroke; }
+.geo-dash { stroke-dasharray: 2 7; }
+.geo-thin { stroke: var(--line); }
+.geo-arc { stroke: var(--lotus-petal); stroke-width: 1.5; }
+.geo-dot { fill: var(--lotus-petal); stroke: none; }
+@keyframes geo-spin { to { rotate: 360deg; } }
+/* 縦書きのスクロール表示。右端に線が流れる */
+.scroll-cue {
+  position: absolute; right: 0; bottom: 3.5rem;
+  writing-mode: vertical-rl;
+  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--muted); padding-bottom: 4.5rem;
+  transition: color 0.2s;
+}
+.scroll-cue::after {
+  content: ''; position: absolute; left: 50%; bottom: 0; width: 1px; height: 3.75rem;
+  background: linear-gradient(var(--fg), var(--fg)) no-repeat 0 0 / 1px 40%, var(--line);
+  animation: cue 2.2s var(--ease) infinite;
+}
+.scroll-cue:hover { color: var(--fg); }
+@keyframes cue {
+  0% { background-position: 0 -150%; }
+  100% { background-position: 0 250%; }
+}
 .wordmark {
   font-family: var(--font); font-weight: 600;
   font-size: clamp(4.2rem, 15vw, 11.5rem);
@@ -241,7 +280,28 @@ main:has(> .band:last-child) { padding-bottom: 0; }
 .intro-meta {
   display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 2rem;
   margin-top: 3rem; padding-top: 1.25rem; border-top: 1px solid var(--fg);
+  margin-right: 3rem;
 }
+
+/* 袋文字の流れる帯。Works と Writing の区切り */
+.marquee {
+  overflow: hidden; margin-top: 6rem; padding-block: 0.5rem;
+  border-block: 1px solid var(--line);
+  user-select: none;
+}
+.marquee-track { display: flex; width: max-content; animation: marquee 40s linear infinite; }
+.marquee-track span {
+  display: flex; align-items: center; flex-shrink: 0;
+  font-family: var(--font); font-weight: 600;
+  font-size: clamp(3.5rem, 9vw, 7.5rem); line-height: 1.05; letter-spacing: -0.04em;
+  color: transparent; -webkit-text-stroke: 1px var(--line-strong);
+}
+.marquee-track i {
+  font-style: normal; margin-inline: 0.35em;
+  -webkit-text-stroke: 0; color: var(--lotus-petal); font-weight: 300;
+}
+@keyframes marquee { to { transform: translateX(-50%); } }
+.band-flush { margin-top: 0; }
 .intro-desc { margin: 0; letter-spacing: 0.04em; color: var(--muted); max-width: 34rem; text-wrap: pretty; }
 .intro-index {
   list-style: none; margin: 0; padding: 0; display: flex; gap: 0.25rem 1.75rem; flex-wrap: wrap;
@@ -552,7 +612,11 @@ details summary:hover { color: var(--fg); }
   .intro { padding-top: 4rem; }
   .sys { display: none; }
   .cross-tl, .cross-tr { top: calc(2rem - 5px); }
-  .intro-meta { grid-template-columns: 1fr; gap: 1rem; margin-top: 2rem; }
+  .intro-meta { grid-template-columns: 1fr; gap: 1rem; margin-top: 2rem; margin-right: 0; }
+  .intro { min-height: calc(100svh - 96px); padding-bottom: 2.5rem; }
+  .geo { width: 110vw; right: -45vw; top: 46%; }
+  .scroll-cue { display: none; }
+  .marquee { margin-top: 4rem; }
   .page-head, .article-head { padding-top: 3.5rem; }
   .grid { grid-template-columns: 1fr; }
   .post-row a { grid-template-columns: 1fr; gap: 0.2rem; }
