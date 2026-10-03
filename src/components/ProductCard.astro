@@ -1,0 +1,36 @@
+---
+import { amazonUrl, stars } from '../lib';
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  image?: string;
+  rating?: number;
+  asin?: string;
+  links?: { label: string; url: string }[];
+  tags?: string[];
+}
+
+const { title, subtitle, image, rating, asin, links = [], tags = [] } = Astro.props;
+const buyLinks = [...(asin ? [{ label: 'Amazon', url: amazonUrl(asin) }] : []), ...links];
+---
+
+<article class:list={['card', 'product', { 'no-image': !image }]}>
+  {image && <img src={image} alt="" loading="lazy" />}
+  <div>
+    <h3>{title}</h3>
+    {subtitle && <p class="muted">{subtitle}</p>}
+    {rating && <p class="stars" aria-label={`評価 ${rating} / 5`}>{stars(rating)}</p>}
+    <slot />
+    {tags.length > 0 && (
+      <ul class="tags">{tags.map((t) => <li class="tag">{t}</li>)}</ul>
+    )}
+    {buyLinks.length > 0 && (
+      <div class="buy">
+        {buyLinks.map((l) => (
+          <a href={l.url} target="_blank" rel="sponsored noopener">{l.label}で見る</a>
+        ))}
+      </div>
+    )}
+  </div>
+</article>

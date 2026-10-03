@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../consts';
+---
+
+<Base title="About">
+  <h1>About</h1>
+  <div class="prose">
+    <p>{SITE.author} の個人サイトです。ここに自己紹介を書きます。</p>
+    <h2>できること</h2>
+    <ul>
+      <li>TypeScript / Web フロントエンド</li>
+      <li>Bot 開発</li>
+    </ul>
+    <h2>リンク</h2>
+    <ul>
+      <li><a href={SITE.github}>GitHub</a></li>
+    </ul>
+  </div>
+</Base>

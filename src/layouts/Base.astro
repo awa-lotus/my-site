@@ -1,0 +1,66 @@
+---
+import '../styles/global.css';
+import { SITE, NAV } from '../consts';
+import { url } from '../lib';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = SITE.description } = Astro.props;
+const pageTitle = title ? `${title} | ${SITE.title}` : SITE.title;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const current = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === '/' ? current.replace(/\/$/, '') === url('') : current.startsWith(url(href));
+---
+
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
+    <link rel="sitemap" href={url('/sitemap-index.xml')} />
+    <link rel="alternate" type="application/rss+xml" title={SITE.title} href={url('/rss.xml')} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="logo" href={url('/')}>{SITE.title}</a>
+        <nav>
+          {NAV.map((item) => (
+            <a href={url(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>
+              {item.label}
+            </a>
+          ))}
+        </nav>
+      </div>
+    </header>
+    <main class="container">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        <p class="disclosure">
+          当サイトはアフィリエイトプログラム(Amazon アソシエイトなど)に参加しており、紹介リンクから購入されると運営者に報酬が入ることがあります。
+        </p>
+        <p>
+          &copy; {new Date().getFullYear()} {SITE.author}{' · '}
+          <a href={SITE.github}>GitHub</a>
+          {SITE.x && <>{' · '}<a href={SITE.x}>X</a></>}
+          {' · '}<a href={url('/rss.xml')}>RSS</a>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

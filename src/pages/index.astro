@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import PostList from '../components/PostList.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { SITE } from '../consts';
+import { getPosts, getProjects } from '../data';
+import { url } from '../lib';
+
+const posts = (await getPosts()).slice(0, 5);
+const projects = (await getProjects()).filter((p) => p.data.featured).slice(0, 3);
+---
+
+<Base>
+  <h1>こんにちは、{SITE.author} です。</h1>
+  <p class="lead">{SITE.description}</p>
+
+  <h2>Projects</h2>
+  <div class="list">{projects.map((project) => <ProjectCard project={project} />)}</div>
+  <a href={url('/projects/')}>すべてのプロジェクト →</a>
+
+  <h2>Latest posts</h2>
+  <PostList posts={posts} />
+  <a href={url('/blog/')}>すべての記事 →</a>
+</Base>

@@ -1,0 +1,48 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { formatDate } from '../../lib';
+
+const STATUS = { read: '読んだ', reading: '読んでいる', want: '読みたい' } as const;
+
+const books = (await getCollection('books')).sort(
+  (a, b) => (b.data.readAt?.valueOf() ?? 0) - (a.data.readAt?.valueOf() ?? 0),
+);
+const entries = await Promise.all(
+  books.map(async (book) => ({ book, Content: (await render(book)).Content })),
+);
+const groups = (Object.keys(STATUS) as (keyof typeof STATUS)[])
+  .map((status) => ({ status, items: entries.filter((e) => e.book.data.status === status) }))
+  .filter((g) => g.items.length > 0);
+---
+
+<Base title="Books" description="読んだ本の記録">
+  <h1>Books</h1>
+  <p class="lead">読んだ本と感想。</p>
+  {groups.map(({ status, items }) => (
+    <section>
+      <h2>{STATUS[status]} ({items.length})</h2>
+      <div class="list">
+        {items.map(({ book, Content }) => (
+          <ProductCard
+            title={book.data.title}
+            subtitle={[book.data.author, book.data.readAt && formatDate(book.data.readAt)].filter(Boolean).join(' · ')}
+            image={book.data.image}
+            rating={book.data.rating}
+            asin={book.data.asin}
+            links={book.data.links}
+            tags={book.data.tags}
+          >
+            {book.body?.trim() && (
+              <details>
+                <summary>感想</summary>
+                <div class="prose"><Content /></div>
+              </details>
+            )}
+          </ProductCard>
+        ))}
+      </div>
+    </section>
+  ))}
+</Base>
