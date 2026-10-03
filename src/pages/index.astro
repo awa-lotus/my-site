@@ -48,13 +48,17 @@ const [head, ...rest] = SITE.title.split('-');
 
   <div class="container">
     <section class="section">
-      <SectionHead num="01" title="Works" href={url('/projects/')} />
+      <SectionHead num="01" title="Works" label="作ったもの" href={url('/projects/')} />
       <div class="grid">{works.map((project) => <ProjectCard project={project} />)}</div>
     </section>
+  </div>
 
-    <section class="section">
-      <SectionHead num="02" title="Writing" href={url('/blog/')} />
-      <PostList posts={posts} />
-    </section>
+  <div class="band">
+    <div class="container">
+      <section class="section">
+        <SectionHead num="02" title="Writing" label="書いたこと" href={url('/blog/')} />
+        <PostList posts={posts} />
+      </section>
+    </div>
   </div>
 </Base>
